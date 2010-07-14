@@ -1,5 +1,5 @@
 ;;;; git-dwim.el --- git branch handling in Emacs
-;; Time-stamp: <2010-07-14 23:14:38 rubikitch>
+;; Time-stamp: <2010-07-14 23:55:40 rubikitch>
 
 ;; Copyright (C) 2010  rubikitch
 
@@ -68,35 +68,42 @@
   "git-dwim"
   :group 'vc)
 
-(defun gb/current-branch ()
+(defun git-current-branch ()
   (substring (shell-command-to-string "git branch | grep '\*'") 2 -1))
-(defun gb/get-branches ()
+(defun git-get-branches ()
   (split-string (shell-command-to-string "git branch | cut -b3-") "\n" t))
-
+(defun git-unmerged-p ()
+  (string-match "^# Unmerged paths:" (shell-command-to-string "git status")))
 (defun git-branch-next-action ()
   (interactive)
-  (cond ((equal (gb/current-branch) "master")
+  (cond ((equal (git-current-branch) "master")
          (case (read-event "[s]witch-to-other-branch [c]reate-new-branch")
-           ((?s ?\C-s) (gb/switch-to-other-branch))
-           ((?c ?\C-c) (gb/create-new-branch))
+           ((?s ?\C-s) (git-switch-to-other-branch))
+           ((?c ?\C-c) (git-create-new-branch))
            (t          (error "invalid key"))))
-        ;; TODO conflict in rebase
+        ((git-unmerged-p)
+         (git-merge-to-master t))
+
         (t
          (case (read-event "[s]witch-to-other-branch [m]erge-to-master")
-           ((?s ?\C-s) (gb/switch-to-other-branch))
-           ((?m ?\C-m) (gb/merge-to-master))
+           ((?s ?\C-s) (git-switch-to-other-branch))
+           ((?m ?\C-m) (git-merge-to-master nil))
            (t          (error "invalid key"))))))
 
-(defun gb/create-new-branch (&optional branch)
+(defun git-create-new-branch (&optional branch)
   (setq branch (or branch (read-string "Create and switch to new branch: ")))
   (shell-command (format "git checkout -b %s" branch)))
-(defun gb/switch-to-other-branch (&optional branch)
+(defun git-switch-to-other-branch (&optional branch)
   (setq branch (or branch (completing-read "Switch to new branch: "
-                                           (gb/get-branches) nil t)))
+                                           (git-get-branches) nil t)))
   (shell-command (format "git checkout %s" branch)))
-(defun gb/merge-to-master ()
-  (unless (string-match "CONFLICT" (shell-command-to-string "git rebase master"))
-    (let ((branch (gb/current-branch)))
+(defun git-merge-to-master (continue)
+  (when continue (shell-command "git add ."))
+  (unless (string-match
+           "^CONFLICT"
+           (shell-command-to-string (format "git rebase %s master"
+                                            (if continue "--continue" ""))))
+    (let ((branch (git-current-branch)))
       (shell-command (format "git checkout master; git merge %s; git branch -d %s"
                              branch branch)))))
 (global-set-key "\C-xvB" 'git-branch-next-action)
