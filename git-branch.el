@@ -1,5 +1,5 @@
 ;;;; git-branch.el --- git branch handling in Emacs
-;; Time-stamp: <2010-07-14 09:17:58 rubikitch>
+;; Time-stamp: <2010-07-14 15:56:00 rubikitch>
 
 ;; Copyright (C) 2010  rubikitch
 
@@ -68,6 +68,38 @@
   "git-branch"
   :group 'vc)
 
+(defun gb/current-branch ()
+  (substring (shell-command-to-string "git branch | grep '\*'") 2 -1))
+(defun gb/get-branches ()
+  (split-string (shell-command-to-string "git branch | cut -b3-") "\n" t))
+
+(defun git-branch-next-action ()
+  (interactive)
+  (cond ((equal (gb/current-branch) "master")
+         (case (read-event "[s]witch-to-other-branch [c]reate-new-branch")
+           ((?s ?\C-s) (gb/switch-to-other-branch))
+           ((?c ?\C-c) (gb/create-new-branch))
+           (t          (error "invalid key"))))
+        ;; TODO conflict in rebase
+        (t
+         (case (read-event "[s]witch-to-other-branch [m]erge-to-master")
+           ((?s ?\C-s) (gb/switch-to-other-branch))
+           ((?m ?\C-m) (gb/merge-to-master))
+           (t          (error "invalid key"))))))
+
+(defun gb/create-new-branch (&optional branch)
+  (setq branch (or branch (read-string "Create and switch to new branch: ")))
+  (shell-command (format "git checkout -b %s" branch)))
+(defun gb/switch-to-other-branch (&optional branch)
+  (setq branch (or branch (completing-read "Switch to new branch: "
+                                           (gb/get-branches) nil t)))
+  (shell-command (format "git checkout %s" branch)))
+(defun gb/merge-to-master ()
+  (unless (string-match "CONFLICT" (shell-command-to-string "git rebase master"))
+    (let ((branch (gb/current-branch)))
+      (shell-command (format "git checkout master; git merge %s; git branch -d %s"
+                             branch branch)))))
+(global-set-key "\C-xvB" 'git-branch-next-action)
 (provide 'git-branch)
 
 ;; How to save (DO NOT REMOVE!!)
