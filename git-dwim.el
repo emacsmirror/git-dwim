@@ -1,11 +1,11 @@
-;;;; git-branch.el --- git branch handling in Emacs
-;; Time-stamp: <2010-07-14 15:56:00 rubikitch>
+;;;; git-dwim.el --- git branch handling in Emacs
+;; Time-stamp: <2010-07-14 23:14:38 rubikitch>
 
 ;; Copyright (C) 2010  rubikitch
 
 ;; Author: rubikitch <rubikitch@ruby-lang.org>
 ;; Keywords: git, tools, convenience
-;; URL: http://www.emacswiki.org/cgi-bin/wiki/download/git-branch.el
+;; URL: http://www.emacswiki.org/cgi-bin/wiki/download/git-dwim.el
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -38,14 +38,14 @@
 
 ;;; Installation:
 ;;
-;; Put git-branch.el to your load-path.
+;; Put git-dwim.el to your load-path.
 ;; The load-path is usually ~/elisp/.
 ;; It's set in your ~/.emacs like this:
 ;; (add-to-list 'load-path (expand-file-name "~/elisp"))
 ;;
 ;; And the following to your ~/.emacs startup file.
 ;;
-;; (require 'git-branch)
+;; (require 'git-dwim)
 ;;
 ;; No need more.
 
@@ -53,19 +53,19 @@
 ;;
 ;;
 ;; All of the above can customize by:
-;;      M-x customize-group RET git-branch RET
+;;      M-x customize-group RET git-dwim RET
 ;;
 
 
 ;;; History:
 
-;; See http://www.rubyist.net/~rubikitch/gitlog/emacs-git-branch.txt
+;; See http://www.rubyist.net/~rubikitch/gitlog/emacs-git-dwim.txt
 
 ;;; Code:
 
 (eval-when-compile (require 'cl))
-(defgroup git-branch nil
-  "git-branch"
+(defgroup git-dwim nil
+  "git-dwim"
   :group 'vc)
 
 (defun gb/current-branch ()
@@ -100,8 +100,8 @@
       (shell-command (format "git checkout master; git merge %s; git branch -d %s"
                              branch branch)))))
 (global-set-key "\C-xvB" 'git-branch-next-action)
-(provide 'git-branch)
+(provide 'git-dwim)
 
 ;; How to save (DO NOT REMOVE!!)
-;; (progn (git-log-upload) (emacswiki-post "git-branch.el"))
-;;; git-branch.el ends here
+;; (progn (git-log-upload) (emacswiki-post "git-dwim.el"))
+;;; git-dwim.el ends here
