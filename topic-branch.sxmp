@@ -1,0 +1,56 @@
+$ rm -rf /tmp/gittest
+$ cd /tmp; mkdir gittest; cd gittest
+$ touch a
+$ git init; git add .; git commit -m 0
+Initialized empty Git repository in /tmp/gittest/.git/
+[master (root-commit) bae54c0] 0
+ 0 files changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 a
+$ echo a1 > a; git commit -am '1'
+[master 688c1c9] 1
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+$ echo a2 > a; git commit -am '2'
+[master 6780149] 2
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+$ git checkout -b topic
+Switched to a new branch 'topic'
+$ echo b1 > a; git commit -am 'b1'
+[topic 4debc4b] b1
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+$ echo b2 > a; git commit -am 'b2'
+[topic 0859224] b2
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+$ magit-log
+* 0859224aa38b3cfecb879dedaa96c964ce5a5c4d (HEAD, refs/heads/topic) b2
+* 4debc4b5a1ef303c40f0a7d5e140cd1d85098848 b1
+* 6780149feb2f4b1fc14d5e8fdf8ea400e9127556 (refs/heads/master) 2
+* 688c1c955c3c345a68a83d1cb0e2f558ea152c21 1
+* bae54c0f01c79f286dc2561ac4342be2bbe3916f 0
+$ git rebase master
+Current branch topic is up to date.
+$ git checkout master
+Switched to branch 'master'
+$ magit-log
+* 6780149feb2f4b1fc14d5e8fdf8ea400e9127556 (HEAD, refs/heads/master) 2
+* 688c1c955c3c345a68a83d1cb0e2f558ea152c21 1
+* bae54c0f01c79f286dc2561ac4342be2bbe3916f 0
+$ git merge topic
+Updating 6780149..0859224
+Fast-forward
+ a |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+$ magit-log
+* 0859224aa38b3cfecb879dedaa96c964ce5a5c4d (HEAD, refs/heads/topic, refs/heads/master) b2
+* 4debc4b5a1ef303c40f0a7d5e140cd1d85098848 b1
+* 6780149feb2f4b1fc14d5e8fdf8ea400e9127556 2
+* 688c1c955c3c345a68a83d1cb0e2f558ea152c21 1
+* bae54c0f01c79f286dc2561ac4342be2bbe3916f 0
+$ git branch -d topic
+Deleted branch topic (was 0859224).
+$ magit-log
+* 0859224aa38b3cfecb879dedaa96c964ce5a5c4d (HEAD, refs/heads/master) b2
+* 4debc4b5a1ef303c40f0a7d5e140cd1d85098848 b1
+* 6780149feb2f4b1fc14d5e8fdf8ea400e9127556 2
+* 688c1c955c3c345a68a83d1cb0e2f558ea152c21 1
+* bae54c0f01c79f286dc2561ac4342be2bbe3916f 0
+$ rm -rf /tmp/gittest
