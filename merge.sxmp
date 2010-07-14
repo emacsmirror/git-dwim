@@ -1,0 +1,56 @@
+$ rm -rf /tmp/gittest
+$ cd /tmp; mkdir gittest; cd gittest
+$ touch a b c
+$ git init; git add .; git commit -m init
+Initialized empty Git repository in /tmp/gittest/.git/
+[master (root-commit) a0585fd] init
+ 0 files changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 a
+ create mode 100644 b
+ create mode 100644 c
+$ echo a1 > a; git commit -am 'modify a (1)'
+[master 46e42ab] modify a (1)
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+$ echo b1 > b; git commit -am 'modify b (1)'
+[master 4937d32] modify b (1)
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+$ git branch
+* master
+$ git checkout -b topic
+Switched to a new branch 'topic'
+$ echo a2 > a; git commit -am 'modify a (2)'
+[topic e15a056] modify a (2)
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+$ echo c1 > c; git commit -am 'modify c (1)'
+[topic df82c0e] modify c (1)
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+$ git status
+# On branch topic
+nothing to commit (working directory clean)
+$ git branch
+  master
+* topic
+$ git checkout master
+Switched to branch 'master'
+$ echo c2 > c; git commit -am 'modify c (2)'
+[master ab3d9e6] modify c (2)
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+$ git log --pretty=oneline
+ab3d9e654268efb4078a1588f57fa0a3f2f10652 modify c (2)
+4937d32ed2d3c474270a0bcd33f8307fb8e855a1 modify b (1)
+46e42ab717ee5c22eef054ef40d0e1caa5ef05f6 modify a (1)
+a0585fd3bfe900330b94c3145f835b2ec07d657b init
+$ git "log" "--max-count=100" "--pretty=oneline" "--decorate=full" "--graph" "HEAD" "--"
+* ab3d9e654268efb4078a1588f57fa0a3f2f10652 (HEAD, refs/heads/master) modify c (2)
+* 4937d32ed2d3c474270a0bcd33f8307fb8e855a1 modify b (1)
+* 46e42ab717ee5c22eef054ef40d0e1caa5ef05f6 modify a (1)
+* a0585fd3bfe900330b94c3145f835b2ec07d657b init
+$ git checkout topic
+Switched to branch 'topic'
+$ magit-log
+* df82c0ed564b7e8d1f15e9844182ed8c4a6a3784 (HEAD, refs/heads/topic) modify c (1)
+* e15a05682b3b957cc06b0926ffbd42d644309eeb modify a (2)
+* 4937d32ed2d3c474270a0bcd33f8307fb8e855a1 modify b (1)
+* 46e42ab717ee5c22eef054ef40d0e1caa5ef05f6 modify a (1)
+* a0585fd3bfe900330b94c3145f835b2ec07d657b init
+$ # rm -rf /tmp/gittest
