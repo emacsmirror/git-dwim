@@ -1,0 +1,124 @@
+$ rm -rf /tmp/gittest
+$ cd /tmp; mkdir gittest; cd gittest
+$ touch a
+$ git init; git add .; git commit -m 0
+Initialized empty Git repository in /tmp/gittest/.git/
+[master (root-commit) 88dc786] 0
+ 0 files changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 a
+$ echo a1 > a; git commit -am '1'
+[master 6875467] 1
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+$ (echo "*"; echo a2) >> a; git commit -am '2'
+[master e90cb40] 2
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+$ cat a
+a1
+*
+a2
+$ magit-log
+* e90cb40bed665d1cc22a8b202bb9ad61f43b3b49 (HEAD, refs/heads/master) 2
+* 68754675af20d5c4f939a181ac7e6a219df584e8 1
+* 88dc7863752ac4cc71a5851c4b8200975be03de1 0
+$ git checkout 'HEAD^'
+Note: checking out 'HEAD^'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b new_branch_name
+
+HEAD is now at 6875467... 1
+$ git branch
+* (no branch)
+  master
+$ magit-log
+* 68754675af20d5c4f939a181ac7e6a219df584e8 (HEAD) 1
+* 88dc7863752ac4cc71a5851c4b8200975be03de1 0
+$ git checkout -b new-branch
+Switched to a new branch 'new-branch'
+$ git branch
+  master
+* new-branch
+$ cat a
+a1
+$ (echo "/"; echo a2) >> a; git commit -am '2/'
+[new-branch a3b769e] 2/
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+$ cat a
+a1
+/
+a2
+$ magit-log
+* a3b769ec2bd831e1dfca0bcc857e68f9f7ec4c50 (HEAD, refs/heads/new-branch) 2/
+* 68754675af20d5c4f939a181ac7e6a219df584e8 1
+* 88dc7863752ac4cc71a5851c4b8200975be03de1 0
+$ git status
+# On branch new-branch
+nothing to commit (working directory clean)
+$ git rebase master
+First, rewinding head to replay your work on top of it...
+Applying: 2/
+Using index info to reconstruct a base tree...
+Falling back to patching base and 3-way merge...
+Auto-merging a
+CONFLICT (content): Merge conflict in a
+Failed to merge in the changes.
+Patch failed at 0001 2/
+
+When you have resolved this problem run "git rebase --continue".
+If you would prefer to skip this patch, instead run "git rebase --skip".
+To restore the original branch and stop rebasing run "git rebase --abort".
+
+$ git status
+# Not currently on any branch.
+# Unmerged paths:
+#   (use "git reset HEAD <file>..." to unstage)
+#   (use "git add/rm <file>..." as appropriate to mark resolution)
+#
+#	both modified:      a
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+$ git branch
+* (no branch)
+  master
+  new-branch
+$ cat a
+a1
+<<<<<<< HEAD
+*
+=======
+/
+>>>>>>> 2/
+a2
+$ (echo a1; echo '*/'; echo a2) > a; git add .
+$ git rebase --continue
+Applying: 2/
+$ magit-log
+* ef27e021514aa8a772dcd713cfaf550775aff9bf (HEAD, refs/heads/new-branch) 2/
+* e90cb40bed665d1cc22a8b202bb9ad61f43b3b49 (refs/heads/master) 2
+* 68754675af20d5c4f939a181ac7e6a219df584e8 1
+* 88dc7863752ac4cc71a5851c4b8200975be03de1 0
+$ git checkout master
+Switched to branch 'master'
+$ git merge new-branch
+Updating e90cb40..ef27e02
+Fast-forward
+ a |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+$ cat a
+a1
+*/
+a2
+$ git branch -d new-branch
+Deleted branch new-branch (was ef27e02).
+$ magit-log
+* ef27e021514aa8a772dcd713cfaf550775aff9bf (HEAD, refs/heads/master) 2/
+* e90cb40bed665d1cc22a8b202bb9ad61f43b3b49 2
+* 68754675af20d5c4f939a181ac7e6a219df584e8 1
+* 88dc7863752ac4cc71a5851c4b8200975be03de1 0
+$ rm -rf /tmp/gittest
