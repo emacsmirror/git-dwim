@@ -1,5 +1,5 @@
 ;;;; git-dwim.el --- Context-aware git commands such as branch handling
-;; Time-stamp: <2010-07-16 04:29:20 rubikitch>
+;; Time-stamp: <2010-07-16 04:32:33 rubikitch>
 
 ;; Copyright (C) 2010  rubikitch
 
@@ -83,6 +83,8 @@
   "git-dwim"
   :group 'vc)
 
+(defun gd-shell-command (command)
+  (shell-command command " *git-dwim*"))
 (defun git-current-branch ()
   (substring (shell-command-to-string "git branch | grep '\*'") 2 -1))
 (defun git-get-branches ()
@@ -121,24 +123,24 @@
   "Create new BRANCH and switch to it."
   (interactive)
   (setq branch (or branch (read-string "Create and switch to new branch: ")))
-  (shell-command (format "git checkout -b %s" branch)))
+  (gd-shell-command (format "git checkout -b %s" branch)))
 (defun git-switch-to-other-branch (&optional branch)
   "Switch to existing BRANCH."
   (interactive)
   (setq branch (or branch (completing-read "Switch to new branch: "
                                            (git-get-branches) nil t)))
-  (shell-command (format "git checkout %s" branch)))
+  (gd-shell-command (format "git checkout %s" branch)))
 (defun git-merge-to (&optional branch continue)
   "Merge this branch to master."
   (interactive)
   (setq branch (or branch "master"))
-  (when continue (shell-command "git add ."))
+  (when continue (gd-shell-command "git add ."))
   (let ((output (shell-command-to-string
                  (format "git rebase %s %s" (if continue "--continue" "") branch))))
     (if (string-match "^CONFLICT" output)
         (gd-display-string output "*git rebase conflict*")
       (let ((cur (git-current-branch)))
-        (shell-command (format "git checkout %s; git merge %s; git branch -d %s"
+        (gd-shell-command (format "git checkout %s; git merge %s; git branch -d %s"
                                branch cur cur))))))
 (provide 'git-dwim)
 
