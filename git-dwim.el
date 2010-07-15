@@ -1,5 +1,5 @@
-;;;; git-dwim.el --- git branch handling in Emacs
-;; Time-stamp: <2010-07-16 04:17:37 rubikitch>
+;;;; git-dwim.el --- Context-aware git commands such as branch handling
+;; Time-stamp: <2010-07-16 04:22:44 rubikitch>
 
 ;; Copyright (C) 2010  rubikitch
 
