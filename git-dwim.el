@@ -1,5 +1,5 @@
 ;;;; git-dwim.el --- Context-aware git commands such as branch handling
-;; Time-stamp: <2010-07-16 04:32:33 rubikitch>
+;; Time-stamp: <2010-07-16 04:57:12 rubikitch>
 
 ;; Copyright (C) 2010  rubikitch
 
@@ -134,7 +134,8 @@
   "Merge this branch to master."
   (interactive)
   (setq branch (or branch "master"))
-  (when continue (gd-shell-command "git add ."))
+  (when continue
+    (gd-shell-command (format "git add %s" (shell-quote-argument buffer-file-name))))
   (let ((output (shell-command-to-string
                  (format "git rebase %s %s" (if continue "--continue" "") branch))))
     (if (string-match "^CONFLICT" output)
