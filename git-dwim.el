@@ -1,5 +1,5 @@
 ;;;; git-dwim.el --- Context-aware git commands such as branch handling
-;; Time-stamp: <2010-07-16 04:26:59 rubikitch>
+;; Time-stamp: <2010-07-16 04:29:20 rubikitch>
 
 ;; Copyright (C) 2010  rubikitch
 
@@ -24,6 +24,13 @@
 
 ;;; Commentary:
 ;;
+;; This file provides context-aware git commands.
+;; Currently only `git-branch-next-action'.
+;; 
+;; `git-branch-next-action' does typical branch handling.
+;;    * If current branch is master: switch to other or new branch.
+;;    * If current branch is not master: switch to other branch or merge this branch to master.
+;;    * If merge is failed: continue merging (You have to resolve conflict merker)
 
 ;;; Commands:
 ;;
