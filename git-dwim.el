@@ -1,5 +1,5 @@
 ;;;; git-dwim.el --- git branch handling in Emacs
-;; Time-stamp: <2010-07-14 23:55:40 rubikitch>
+;; Time-stamp: <2010-07-15 22:36:30 rubikitch>
 
 ;; Copyright (C) 2010  rubikitch
 
@@ -83,7 +83,6 @@
            (t          (error "invalid key"))))
         ((git-unmerged-p)
          (git-merge-to-master t))
-
         (t
          (case (read-event "[s]witch-to-other-branch [m]erge-to-master")
            ((?s ?\C-s) (git-switch-to-other-branch))
@@ -91,13 +90,16 @@
            (t          (error "invalid key"))))))
 
 (defun git-create-new-branch (&optional branch)
+  (interactive)
   (setq branch (or branch (read-string "Create and switch to new branch: ")))
   (shell-command (format "git checkout -b %s" branch)))
 (defun git-switch-to-other-branch (&optional branch)
+  (interactive)
   (setq branch (or branch (completing-read "Switch to new branch: "
                                            (git-get-branches) nil t)))
   (shell-command (format "git checkout %s" branch)))
-(defun git-merge-to-master (continue)
+(defun git-merge-to-master (&optional continue)
+  (interactive)
   (when continue (shell-command "git add ."))
   (unless (string-match
            "^CONFLICT"
