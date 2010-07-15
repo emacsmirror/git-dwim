@@ -1,5 +1,5 @@
 ;;;; git-dwim.el --- Context-aware git commands such as branch handling
-;; Time-stamp: <2010-07-16 04:57:12 rubikitch>
+;; Time-stamp: <2010-07-16 05:38:30 rubikitch>
 
 ;; Copyright (C) 2010  rubikitch
 
@@ -93,9 +93,8 @@
   (string-match "^# Unmerged paths:" (shell-command-to-string "git status")))
 (defun gd-display-string (output buffer)
   (with-current-buffer (get-buffer-create buffer)
-    (erase-buffer)
     (buffer-disable-undo)
-    (insert output)
+    (insert output "\n===========================================================\n")
     (display-buffer (current-buffer))))
 
 (defun git-branch-next-action ()
@@ -138,9 +137,10 @@
     (gd-shell-command (format "git add %s" (shell-quote-argument buffer-file-name))))
   (let ((output (shell-command-to-string
                  (format "git rebase %s %s" (if continue "--continue" "") branch))))
-    (if (string-match "^CONFLICT" output)
+    (if (string-match "^CONFLICT\\|^You must edit all merge conflicts" output)
         (gd-display-string output "*git rebase conflict*")
       (let ((cur (git-current-branch)))
+        (ignore-errors (kill-buffer "*git rebase conflict*"))
         (gd-shell-command (format "git checkout %s; git merge %s; git branch -d %s"
                                branch cur cur))))))
 (provide 'git-dwim)
