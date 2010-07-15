@@ -1,5 +1,5 @@
 ;;;; git-dwim.el --- Context-aware git commands such as branch handling
-;; Time-stamp: <2010-07-16 04:22:44 rubikitch>
+;; Time-stamp: <2010-07-16 04:26:59 rubikitch>
 
 ;; Copyright (C) 2010  rubikitch
 
@@ -24,7 +24,6 @@
 
 ;;; Commentary:
 ;;
-;; 
 
 ;;; Commands:
 ;;
@@ -54,7 +53,8 @@
 ;; And the following to your ~/.emacs startup file.
 ;;
 ;; (require 'git-dwim)
-;;
+;; (global-set-key "\C-xvB" 'git-branch-next-action)
+
 ;; No need more.
 
 ;;; Customize:
@@ -133,7 +133,6 @@
       (let ((cur (git-current-branch)))
         (shell-command (format "git checkout %s; git merge %s; git branch -d %s"
                                branch cur cur))))))
-(global-set-key "\C-xvB" 'git-branch-next-action)
 (provide 'git-dwim)
 
 ;; How to save (DO NOT REMOVE!!)
