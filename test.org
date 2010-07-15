@@ -1,0 +1,54 @@
+* testcase
+** Topic Branch
+#+BEGIN_SRC sh
+rm -rf /tmp/gittest; mkdir -p /tmp/gittest; cd /tmp/gittest
+touch a
+git init; git add .; git commit -m 0
+echo a1 > a; git commit -am '1'
+#+END_SRC
+
+# (progn (messages) (find-file-other-window "/tmp/gittest/a"))
+
+#+BEGIN_SRC emacs-lisp
+(load "/m/home/rubikitch/src/emacs-git-dwim/git-dwim.el")
+(eesteps '(
+"C-x v B c newbranch RET"
+"M->"
+"newline RET"
+"C-x C-s"
+"C-x v v"
+"ladd SPC newline"
+"C-c C-c"
+"C-x v B m"
+))
+#+END_SRC
+
+#+results:
+| 8 | steps | stored | - | use | <f12> | to | execute | a | step |
+
+
+** Conflict
+At this time, current branch is master.
+#+BEGIN_SRC emacs-lisp
+(eesteps
+ '("C-x v B cnewbranch RET"
+   "M->"
+   "* RET 2 RET C-x C-s"
+   "C-x v v"
+   "*" 
+   "C-c C-c"
+   "C-x v B smaster RET"
+   "/ RET 2 RET C-x C-s"
+   "C-x v v"
+   "// LFD RET" 
+   "C-c C-c"
+   "C-x v B snewbranch RET"
+   "C-x v B m"
+   "6*C-p 2*C-k C-e 3*C-k 2*C-f 2*C-k C-x C-s"
+   "C-x v B"))
+#+END_SRC
+
+#+results:
+| 15 | steps | stored | - | use | <f12> | to | execute | a | step |
+
+
