@@ -1,4 +1,4 @@
-;;;; git-dwim.el --- Context-aware git commands such as branch handling
+;;; git-dwim.el --- Context-aware git commands such as branch handling
 ;; Time-stamp: <2010-07-19 06:35:44 rubikitch>
 
 ;; Copyright (C) 2010  rubikitch
